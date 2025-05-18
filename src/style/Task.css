@@ -1,0 +1,183 @@
+.outerCard {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #cbd5e0;
+  border-radius: 12px;
+  background-color: black;
+  box-shadow: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: white;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+.outerCard.completed {
+  background-color: #add8e6;
+  box-shadow: 0 0 15px #38a169aa;
+  color: black;
+}
+
+.innerCard {
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  color: black;
+  box-sizing: border-box;
+}
+
+.mainInfo {
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.doneButton {
+  margin-right: 10px;
+  padding: 6px 12px;
+  background-color: #38a169;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.title {
+  flex-grow: 1;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.priorityHigh {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: #e53e3e;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 10px;
+  user-select: none;
+}
+
+.priorityMedium {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: #dd6b20;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 10px;
+  user-select: none;
+}
+
+.priorityLow {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: #38a169;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 10px;
+  user-select: none;
+}
+
+.deleteButton {
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  user-select: none;
+}
+
+.inputDate {
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+  color: black;
+}
+
+.sliderTrack {
+  position: relative;
+  flex-grow: 1;
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 3px;
+}
+
+.sliderFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 6px;
+  background-color: #38a169;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.sliderThumb {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: #38a169;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(56, 161, 105, 0.7);
+  transition: left 0.1s ease;
+}
+
+.inputNumber {
+  width: 50px;
+  padding: 4px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  outline: none;
+  text-align: center;
+  color: black;
+}
+
+.completeLabel {
+  font-size: 14px;
+  font-weight: 600;
+  user-select: none;
+  margin-right: 8px;
+  min-width: 70px;
+  text-align: right;
+}
