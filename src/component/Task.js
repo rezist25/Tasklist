@@ -157,10 +157,10 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
               aria-label={
                 task.completed
                   ? `Mark task ${task.title} as Not Completed`
-                  : `Mark task ${task.title} as done`
+                  : `Mark task ${task.title} as completed`
               }
             >
-              {task.completed ? "Not Completed" : "Done"}
+              {task.completed ? "Mark as Not Completed" : "Mark as Completed"}
             </button>
             <span className="title">
               {task.id} - {task.title}
