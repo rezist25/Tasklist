@@ -163,7 +163,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
               {task.completed ? "Mark as Not Completed" : "Mark as Completed"}
             </button>
             <span className="title">
-              {task.id} - {task.title}
+              {task.id}  {task.title}
             </span>
             <span className={priorityClass[task.priority] || ""}>
               {task.priority}
