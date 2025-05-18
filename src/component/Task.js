@@ -140,9 +140,10 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
     <>
       <motion.li
         className={`outerCard ${task.completed ? "completed" : ""}`}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: 10, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.8 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
         layout
       >
         <div className="innerCard mainInfo">
