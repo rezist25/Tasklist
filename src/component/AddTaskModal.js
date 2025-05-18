@@ -17,7 +17,7 @@ const modalContentStyle = {
   backgroundColor: "white",
   borderRadius: 8,
   padding: 20,
-  width: 400,
+  width: "90%",
   maxWidth: "90vw",
   boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
 };
@@ -111,10 +111,11 @@ export default function AddTaskModal({ onClose, onAddTask }) {
               id="task-title"
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
               style={inputStyle}
               placeholder="Enter task title"
-              required
             />
           </div>
           <div style={formGroupStyle}>
@@ -122,7 +123,9 @@ export default function AddTaskModal({ onClose, onAddTask }) {
             <textarea
               id="task-details"
               value={details}
-              onChange={(e) => setDetails(e.target.value)}
+              onChange={(e) => {
+                setDetails(e.target.value);
+              }}
               style={textareaStyle}
               placeholder="Enter task details"
             />
@@ -133,7 +136,9 @@ export default function AddTaskModal({ onClose, onAddTask }) {
               id="start-date"
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+              }}
               style={inputStyle}
               placeholder="Select start date"
             />
@@ -144,7 +149,9 @@ export default function AddTaskModal({ onClose, onAddTask }) {
               id="approx-end-date"
               type="date"
               value={approxEndDate}
-              onChange={(e) => setApproxEndDate(e.target.value)}
+              onChange={(e) => {
+                setApproxEndDate(e.target.value);
+              }}
               style={inputStyle}
               placeholder="Select approximate end date"
             />
@@ -154,7 +161,9 @@ export default function AddTaskModal({ onClose, onAddTask }) {
             <select
               id="priority"
               value={priority}
-              onChange={(e) => setPriority(e.target.value)}
+              onChange={(e) => {
+                setPriority(e.target.value);
+              }}
               style={inputStyle}
             >
               <option value="High">High</option>

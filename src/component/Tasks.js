@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
-import DataService from "../service/TaskService";
+import React, { useState } from "react";
+import { tasks } from "../data/TestData";
 import TaskList from "./TaskList";
 import AddTaskModal from "./AddTaskModal";
 import { motion } from "framer-motion";
 
 const containerStyle = {
-  maxWidth: 600,
-  margin: "auto",
+  width: "100%",
+  height: "auto",
   padding: 20,
   fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   backgroundColor: "#f5f7fa",
-  borderRadius: 12,
-  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+  borderRadius: 0,
+  boxShadow: "none",
+  boxSizing: "border-box",
+  overflowY: "auto",
 };
 
 const headerStyle = {
@@ -55,9 +57,7 @@ const progressBar = (progress) => ({
 });
 
 export default function Tasks() {
-  const [taskList, setTaskList] = useState([]);
-  const [fetchStatus, setFetchStatus] = useState("pending");
-  const [fetchError, setFetchError] = useState(null);
+  const [taskList, setTaskList] = useState(tasks);
   const [buttonHovered, setButtonHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -68,61 +68,24 @@ export default function Tasks() {
           (taskList.filter((t) => t.completed).length / taskList.length) * 100
         );
 
-  useEffect(() => {
-    setFetchStatus("inProgress");
-    DataService.getTasks()
-      .then((res) => {
-        setTaskList(res);
-      })
-      .catch((error) => {
-        setFetchError(error.message);
-      })
-      .finally(() => {
-        setFetchStatus("completed");
-      });
-  }, []);
-
   const toggleCompletion = (task) => {
     const updatedTask = { ...task, completed: !task.completed };
-    setFetchStatus("inProgress");
-    DataService.updateTask(updatedTask, taskList)
-      .then((res) => {
-        setTaskList(res);
-      })
-      .catch((error) => {
-        setFetchError(error.message);
-      })
-      .finally(() => {
-        setFetchStatus("completed");
-      });
+    const updatedList = taskList.map((t) =>
+      t.id === updatedTask.id ? updatedTask : t
+    );
+    setTaskList(updatedList);
   };
 
   const deleteTask = (taskId) => {
-    setFetchStatus("inProgress");
-    DataService.deleteTask(taskId, taskList)
-      .then((res) => {
-        setTaskList(res);
-      })
-      .catch((error) => {
-        setFetchError(error.message);
-      })
-      .finally(() => {
-        setFetchStatus("completed");
-      });
+    const updatedList = taskList.filter((t) => t.id !== taskId);
+    setTaskList(updatedList);
   };
 
   const updateTask = (updatedTask) => {
-    setFetchStatus("inProgress");
-    DataService.updateTask(updatedTask, taskList)
-      .then((res) => {
-        setTaskList(res);
-      })
-      .catch((error) => {
-        setFetchError(error.message);
-      })
-      .finally(() => {
-        setFetchStatus("completed");
-      });
+    const updatedList = taskList.map((t) =>
+      t.id === updatedTask.id ? updatedTask : t
+    );
+    setTaskList(updatedList);
   };
 
   const handleAddTaskClick = () => {
@@ -134,17 +97,8 @@ export default function Tasks() {
   };
 
   const handleAddTask = (newTask) => {
-    setFetchStatus("inProgress");
-    DataService.addNewTask(newTask, taskList)
-      .then((res) => {
-        setTaskList(res);
-      })
-      .catch((error) => {
-        setFetchError(error.message);
-      })
-      .finally(() => {
-        setFetchStatus("completed");
-      });
+    const updatedList = [...taskList, newTask];
+    setTaskList(updatedList);
   };
 
   return (
@@ -181,18 +135,12 @@ export default function Tasks() {
         {taskList.length} tasks completed)
       </p>
 
-      {fetchStatus === "inProgress" && <p>Loading...</p>}
-      {fetchStatus === "completed" && fetchError && (
-        <p style={{ color: "red" }}>{fetchError}</p>
-      )}
-      {!fetchError && fetchStatus === "completed" && (
-        <TaskList
-          list={taskList}
-          onToggle={toggleCompletion}
-          onDelete={deleteTask}
-          onUpdate={updateTask}
-        />
-      )}
+      <TaskList
+        list={taskList}
+        onToggle={toggleCompletion}
+        onDelete={deleteTask}
+        onUpdate={updateTask}
+      />
     </motion.div>
   );
 }

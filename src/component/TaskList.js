@@ -3,11 +3,22 @@ import Task from "./Task";
 import EditTaskModal from "./EditTaskModal";
 
 const gridContainerStyle = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-  gap: 20,
-  padding: 0,
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 10,
+  padding: 10,
   margin: 0,
+  width: "100%",
+  boxSizing: "border-box",
+  justifyContent: "center",
+  alignItems: "flex-start",
+  minHeight: "100vh",
+};
+
+const taskItemStyle = {
+  flex: "1 1 calc(30% - 10px)", // 3 tasks per row with gap
+  maxWidth: "calc(30% - 10px)",
+  boxSizing: "border-box",
 };
 
 export default function TaskList({ list, onToggle, onDelete, onUpdate }) {
@@ -29,22 +40,22 @@ export default function TaskList({ list, onToggle, onDelete, onUpdate }) {
   return (
     <>
       <div style={gridContainerStyle}>
-        {list.map((mappedTask) => {
-          return (
-            <div
-              key={mappedTask.id}
-              onClick={() => handleTaskClick(mappedTask)}
-              style={{ cursor: "pointer" }}
-            >
-              <Task
-                task={mappedTask}
-                onToggle={() => onToggle(mappedTask)}
-                onDelete={() => onDelete(mappedTask.id)}
-                onUpdate={(updatedTask) => onUpdate(updatedTask)}
-              />
-            </div>
-          );
-        })}
+{list.map((mappedTask) => {
+  return (
+    <div
+      key={mappedTask.id}
+      style={{ ...taskItemStyle, cursor: "default" }}
+    >
+      <Task
+        task={mappedTask}
+        onToggle={() => onToggle(mappedTask)}
+        onDelete={() => onDelete(mappedTask.id)}
+        onUpdate={(updatedTask) => onUpdate(updatedTask)}
+        onEdit={() => handleTaskClick(mappedTask)}
+      />
+    </div>
+  );
+})}
       </div>
       {selectedTask && (
         <EditTaskModal
