@@ -268,8 +268,13 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
         console.error("Error in onToggle callback:", error);
       }
     } else {
-      // Marking as undone: show modal to update progress
-      setShowProgressModal(true);
+      // Marking as undone: reset progress to 0 and mark incomplete
+      setProgress(0);
+      try {
+        onToggle({ ...task, completed: false, progress: 100 });
+      } catch (error) {
+        console.error("Error in onToggle callback:", error);
+      }
     }
   };
 

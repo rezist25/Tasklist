@@ -4,7 +4,7 @@ import TaskList from "./TaskList";
 import AddTaskModal from "./AddTaskModal";
 import { motion } from "framer-motion";
 
-const containerStyle = {
+const baseContainerStyle = {
   width: "100%",
   height: "auto",
   padding: 20,
@@ -24,7 +24,7 @@ const headerStyle = {
   textAlign: "center",
 };
 
-const buttonStyle = {
+const baseButtonStyle = {
   padding: "10px 20px",
   fontSize: 16,
   backgroundColor: "#3182ce",
@@ -41,23 +41,11 @@ const buttonHoverStyle = {
   backgroundColor: "#2b6cb0",
 };
 
-const progressBarContainer = {
-  height: 20,
-  backgroundColor: "#e2e8f0",
-  borderRadius: 10,
-  overflow: "hidden",
-  marginBottom: 20,
-};
-
-const progressBar = (progress) => ({
-  height: "100%",
-  width: `${progress}%`,
-  backgroundColor: progress === 100 ? "#38a169" : "#3182ce",
-  transition: "width 0.8s ease-in-out",
-});
-
 export default function Tasks() {
   const [taskList, setTaskList] = useState([]);
+  const [buttonHovered, setButtonHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const storedTasks = localStorage.getItem("taskList");
@@ -74,8 +62,13 @@ export default function Tasks() {
     }
   }, [taskList]);
 
-  const [buttonHovered, setButtonHovered] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  useEffect(() => {
+    function handleResize() {
+      setWindowWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const progress =
     taskList.length === 0
@@ -85,10 +78,10 @@ export default function Tasks() {
         );
 
   const toggleCompletion = (task) => {
-    const updatedTask = { 
-      ...task, 
+    const updatedTask = {
+      ...task,
       completed: !task.completed,
-      progress: !task.completed ? 100 : 0
+      progress: !task.completed ? 100 : 0,
     };
     const updatedList = taskList.map((t) =>
       t.id === updatedTask.id ? updatedTask : t
@@ -121,6 +114,31 @@ export default function Tasks() {
     setTaskList(updatedList);
   };
 
+  // Dynamic container style for mobile
+  const containerStyle =
+    windowWidth <= 768
+      ? {
+          ...baseContainerStyle,
+          width: "90%",
+          maxWidth: 600,
+          padding: "10px 15px",
+          margin: "0 auto",
+        }
+      : baseContainerStyle;
+
+  // Dynamic button style for mobile
+  const buttonStyle =
+    windowWidth <= 768
+      ? {
+          ...baseButtonStyle,
+          width: "100%",
+          maxWidth: 200,
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }
+      : baseButtonStyle;
+
   return (
     <motion.div
       style={containerStyle}
@@ -143,9 +161,23 @@ export default function Tasks() {
         <AddTaskModal onClose={handleCloseModal} onAddTask={handleAddTask} />
       )}
 
-      <div style={progressBarContainer} aria-label="Progress bar">
+      <div
+        style={{
+          height: 20,
+          backgroundColor: "#e2e8f0",
+          borderRadius: 10,
+          overflow: "hidden",
+          marginBottom: 20,
+        }}
+        aria-label="Progress bar"
+      >
         <motion.div
-          style={progressBar(progress)}
+          style={{
+            height: "100%",
+            width: `${progress}%`,
+            backgroundColor: progress === 100 ? "#38a169" : "#3182ce",
+            transition: "width 0.8s ease-in-out",
+          }}
           layout
           transition={{ duration: 0.8, ease: "easeInOut" }}
         />
