@@ -1,0 +1,7 @@
+.priorityHigh,
+.priorityMedium,
+.priorityLow {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}

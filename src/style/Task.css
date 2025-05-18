@@ -13,6 +13,7 @@
   max-width: 100%;
   box-sizing: border-box;
   overflow-wrap: break-word;
+  background-color: black;
 }
 .outerCard.completed {
   background-color: #add8e6;
@@ -58,7 +59,6 @@
   flex-grow: 1;
   font-weight: bold;
   font-size: 16px;
-  padding:  2px 12px;
 }
 
 .priorityHigh {
@@ -193,4 +193,17 @@
   margin-right: 8px;
   min-width: 70px;
   text-align: right;
+}
+.title {
+  padding: 0 12px;
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doneButton,
+.deleteButton,
+.editButton {
+  flex-shrink: 0;
 }
