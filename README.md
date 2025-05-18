@@ -1,6 +1,9 @@
-# React Tasklist
-
-Proyecto pensado con el objetivo de ir aplicando los conocimientos adquiridos en el proceso de Adviser
+# React Tasklist 
+Rahul Wankhede
+18/05/25
+-you can go to the add and add thet task
+-you can have edit thing 
+-can't change the start date
 
 ## Conceptos implementados
 
