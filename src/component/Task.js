@@ -363,7 +363,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
           onMouseDown={handleMouseDown}
         >
           <div style={sliderContainerStyle}>
-            <span style={completeLabelStyle}>How much % task is completed</span>
+            <span style={completeLabelStyle}> %Completed</span>
             <div style={sliderTrackStyle}>
               <div style={sliderFillStyle(progress)} />
               <div style={sliderThumbStyle(progress)} />

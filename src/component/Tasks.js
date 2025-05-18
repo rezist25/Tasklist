@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { tasks } from "../data/TestData";
 import TaskList from "./TaskList";
 import AddTaskModal from "./AddTaskModal";
@@ -57,7 +57,23 @@ const progressBar = (progress) => ({
 });
 
 export default function Tasks() {
-  const [taskList, setTaskList] = useState(tasks);
+  const [taskList, setTaskList] = useState([]);
+
+  useEffect(() => {
+    const storedTasks = localStorage.getItem("taskList");
+    if (storedTasks) {
+      setTaskList(JSON.parse(storedTasks));
+    } else {
+      setTaskList(tasks);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (taskList.length > 0) {
+      localStorage.setItem("taskList", JSON.stringify(taskList));
+    }
+  }, [taskList]);
+
   const [buttonHovered, setButtonHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -69,7 +85,11 @@ export default function Tasks() {
         );
 
   const toggleCompletion = (task) => {
-    const updatedTask = { ...task, completed: !task.completed };
+    const updatedTask = { 
+      ...task, 
+      completed: !task.completed,
+      progress: !task.completed ? 100 : 0
+    };
     const updatedList = taskList.map((t) =>
       t.id === updatedTask.id ? updatedTask : t
     );

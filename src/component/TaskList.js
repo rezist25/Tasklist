@@ -40,7 +40,7 @@ export default function TaskList({ list, onToggle, onDelete, onUpdate }) {
   return (
     <>
       <div style={gridContainerStyle}>
-{list.map((mappedTask) => {
+{list.map((mappedTask, index) => {
   return (
     <div
       key={mappedTask.id}
@@ -48,6 +48,7 @@ export default function TaskList({ list, onToggle, onDelete, onUpdate }) {
     >
       <Task
         task={mappedTask}
+        isFirst={index === 0}
         onToggle={() => onToggle(mappedTask)}
         onDelete={() => onDelete(mappedTask.id)}
         onUpdate={(updatedTask) => onUpdate(updatedTask)}

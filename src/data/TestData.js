@@ -1,10 +1,5 @@
 export const tasks = [
-  {
-    id: 1,
-    title: "First Task",
-    completed: true,
-    priority : 'High' ,
-  },
+ 
   {
     id: 2,
     title: "Second Task",
@@ -14,7 +9,7 @@ export const tasks = [
   {
     id: 3,
     title: "Third Task",
-    completed: true,
+    completed: false,
     priority : 'High' ,
   },
   {
@@ -26,7 +21,7 @@ export const tasks = [
   {
     id: 5,
     title: "Fifth Task",
-    completed: true,
+    completed: false,
     priority : 'Low' ,
   },
   {
