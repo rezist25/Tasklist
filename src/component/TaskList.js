@@ -1,46 +1,52 @@
-import React, { useState } from "react";
+
+
+
+import React, { useState, useEffect } from "react";
 import Task from "./Task";
 import EditTaskModal from "./EditTaskModal";
-
-const gridContainerStyle = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-  gap: 20,
-  padding: 0,
-  margin: 0,
-};
+import "../style/TaskList.css";
 
 export default function TaskList({ list, onToggle, onDelete, onUpdate }) {
   const [selectedTask, setSelectedTask] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
-  };
+  useEffect(() => {
+    function handleResize() {
+      setWindowWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const handleCloseModal = () => {
-    setSelectedTask(null);
-  };
-
-  const handleSaveTask = (updatedTask) => {
-    onUpdate(updatedTask);
-    setSelectedTask(null);
+  // Determine task item class based on window width
+  const getTaskItemClass = () => {
+    if (windowWidth <= 768) {
+      if (windowWidth > 480) {
+        return "taskItem medium";
+      } else {
+        return "taskItem small";
+      }
+    }
+    return "taskItem";
   };
 
   return (
     <>
-      <div style={gridContainerStyle}>
-        {list.map((mappedTask) => {
+      <div className="gridContainer">
+        {list.map((mappedTask, index) => {
           return (
             <div
-              key={mappedTask.id}
-              onClick={() => handleTaskClick(mappedTask)}
-              style={{ cursor: "pointer" }}
+              key={`${mappedTask.id}-${mappedTask.progress}`} // include progress in key to force re-render
+              className={getTaskItemClass()}
+              style={{ cursor: "default" }}
             >
               <Task
                 task={mappedTask}
+                isFirst={index === 0}
                 onToggle={() => onToggle(mappedTask)}
                 onDelete={() => onDelete(mappedTask.id)}
                 onUpdate={(updatedTask) => onUpdate(updatedTask)}
+                onEdit={() => setSelectedTask(mappedTask)}
               />
             </div>
           );
@@ -49,8 +55,11 @@ export default function TaskList({ list, onToggle, onDelete, onUpdate }) {
       {selectedTask && (
         <EditTaskModal
           task={selectedTask}
-          onClose={handleCloseModal}
-          onSave={handleSaveTask}
+          onClose={() => setSelectedTask(null)}
+          onSave={(updatedTask) => {
+            onUpdate(updatedTask);
+            setSelectedTask(null);
+          }}
         />
       )}
     </>

@@ -1,170 +1,18 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import debounce from "lodash.debounce";
+import ProgressUpdateModal from "./ProgressUpdateModal";
+import "../style/Task.css";
 
-const priorityColors = {
-  High: "#e53e3e",
-  Medium: "#dd6b20",
-  Low: "#38a169",
+const priorityClass = {
+  High: "priorityHigh",
+  Medium: "priorityMedium",
+  Low: "priorityLow",
 };
 
-const outerCardStyle = (completed) => ({
-  marginBottom: 10,
-  padding: 10,
-  border: "1px solid #cbd5e0",
-  borderRadius: 8,
-  backgroundColor: completed ? "#add8e6" : "black", // light blue when completed, black otherwise
-  boxShadow: completed ? "0 0 10px #38a169aa" : "none",
-  transition: "background-color 0.3s ease, box-shadow 0.3s ease",
-  display: "flex",
-  flexDirection: "column",
-  gap: 10,
-  color: completed ? "black" : "white", // text color for contrast
-});
-
-const innerCardStyle = {
-  border: "1px solid #cbd5e0",
-  borderRadius: 6,
-  padding: 10,
-  backgroundColor: "white",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  color: "black",
-};
-
-const mainInfoStyle = {
-  cursor: "pointer",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const headerStyle = {
-  display: "flex",
-  alignItems: "center",
-  marginBottom: 8,
-};
-
-const doneButtonStyle = {
-  marginRight: 10,
-  padding: "6px 12px",
-  backgroundColor: "#38a169",
-  color: "white",
-  border: "none",
-  borderRadius: 6,
-  cursor: "pointer",
-  fontWeight: "600",
-  transition: "background-color 0.3s ease",
-};
-
-const titleStyle = {
-  flexGrow: 1,
-  fontWeight: "bold",
-  fontSize: 16,
-};
-
-const priorityStyle = (priority) => ({
-  padding: "2px 8px",
-  borderRadius: 4,
-  backgroundColor: priorityColors[priority] || "#a0aec0",
-  color: "white",
-  fontSize: 12,
-  fontWeight: "bold",
-  marginRight: 10,
-  userSelect: "none",
-});
-
-const deleteButtonStyle = {
-  backgroundColor: "#e53e3e",
-  color: "white",
-  border: "none",
-  borderRadius: 4,
-  padding: "4px 8px",
-  cursor: "pointer",
-  fontWeight: "600",
-  transition: "background-color 0.3s ease",
-};
-
-const labelStyle = {
-  marginBottom: 8,
-  fontSize: 14,
-  userSelect: "none",
-};
-
-const inputDateStyle = {
-  padding: 6,
-  fontSize: 14,
-  borderRadius: 6,
-  border: "1px solid #cbd5e0",
-  outline: "none",
-  transition: "border-color 0.3s ease",
-};
-
-const sliderContainerStyle = {
-  position: "relative",
-  width: "100%",
-  height: 24,
-  userSelect: "none",
-  display: "flex",
-  alignItems: "center",
-  gap: 10,
-  cursor: "default",
-  color: "black",
-};
-
-const sliderTrackStyle = {
-  position: "relative",
-  flexGrow: 1,
-  height: 6,
-  backgroundColor: "#e2e8f0",
-  borderRadius: 3,
-};
-
-const sliderFillStyle = (progress) => ({
-  position: "absolute",
-  top: 0,
-  left: 0,
-  height: 6,
-  width: `${progress}%`,
-  backgroundColor: "#38a169",
-  borderRadius: 3,
-  transition: "width 0.3s ease",
-});
-
-const sliderThumbStyle = (progress) => ({
-  position: "absolute",
-  top: "50%",
-  left: `${progress}%`,
-  width: 20,
-  height: 20,
-  backgroundColor: "#38a169",
-  borderRadius: "50%",
-  transform: "translate(-50%, -50%)",
-  cursor: "pointer",
-  boxShadow: "0 0 5px rgba(56, 161, 105, 0.7)",
-  transition: "left 0.1s ease",
-});
-
-const inputNumberStyle = {
-  width: 50,
-  padding: 4,
-  fontSize: 14,
-  borderRadius: 6,
-  border: "1px solid #cbd5e0",
-  outline: "none",
-  textAlign: "center",
-  color: "black",
-};
-
-const completeLabelStyle = {
-  fontSize: 14,
-  fontWeight: "600",
-  userSelect: "none",
-  marginRight: 8,
-  minWidth: 70,
-  textAlign: "right",
-};
-
-export default function Task({ task, onToggle, onDelete, onUpdate, onClick }) {
+export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
   const [progress, setProgress] = React.useState(task.progress || 0);
+  const [showProgressModal, setShowProgressModal] = React.useState(false);
   const sliderRef = React.useRef(null);
   const draggingRef = React.useRef(false);
 
@@ -174,13 +22,19 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onClick }) {
     }
   }, [task.progress]);
 
+  // Debounced update to avoid excessive updates
   const debouncedUpdate = React.useCallback(
     debounce((updatedTask) => {
-      onUpdate(updatedTask);
+      try {
+        onUpdate(updatedTask);
+      } catch (error) {
+        console.error("Error in onUpdate callback:", error);
+      }
     }, 300),
     [onUpdate]
   );
 
+  // Update progress state and notify parent
   const updateProgress = (newProgress) => {
     newProgress = Math.min(100, Math.max(0, newProgress));
     setProgress(newProgress);
@@ -193,6 +47,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onClick }) {
     debouncedUpdate(updatedTask);
   };
 
+  // Mouse event handlers for slider drag
   const handleMouseDown = (e) => {
     e.preventDefault();
     draggingRef.current = true;
@@ -213,6 +68,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onClick }) {
     window.removeEventListener("mouseup", handleMouseUp);
   };
 
+  // Calculate progress based on mouse position
   const updateProgressFromPosition = (clientX) => {
     if (!sliderRef.current) return;
     const rect = sliderRef.current.getBoundingClientRect();
@@ -220,6 +76,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onClick }) {
     updateProgress(newProgress);
   };
 
+  // Handle manual number input change
   const handleNumberInputChange = (e) => {
     let value = e.target.value;
     if (value === "") {
@@ -232,80 +89,192 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onClick }) {
     }
   };
 
+  // Handle due date change
   const handleDateChange = (e) => {
     const newDate = e.target.value;
-    onUpdate({ ...task, date: newDate });
+    try {
+      onUpdate({ ...task, date: newDate });
+    } catch (error) {
+      console.error("Error in onUpdate callback:", error);
+    }
+  };
+
+  // Handle done/Not Completed button click
+  const handleDoneClick = () => {
+    if (!task.completed) {
+      // Optimistically update progress to 100%
+      setProgress(100);
+      try {
+        onToggle({ ...task, completed: true, progress: 100 });
+      } catch (error) {
+        console.error("Error in onToggle callback:", error);
+      }
+    } else {
+      // Marking as Not Completed: reset progress to 0 and mark incomplete
+      setProgress(0);
+      try {
+        onToggle({ ...task, completed: false, progress: 100 });
+      } catch (error) {
+        console.error("Error in onToggle callback:", error);
+      }
+    }
+  };
+
+  // Handle progress update from modal save
+  const handleProgressSave = (newProgress) => {
+    setProgress(newProgress);
+    try {
+      onToggle({ ...task, completed: false, progress: newProgress });
+    } catch (error) {
+      console.error("Error in onToggle callback:", error);
+    }
+    setShowProgressModal(false);
+  };
+
+  // Close progress update modal
+  const handleProgressModalClose = () => {
+    setShowProgressModal(false);
   };
 
   return (
-    <motion.li
-      style={outerCardStyle(task.completed)}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      layout
-    >
-      <div style={{ ...innerCardStyle, ...mainInfoStyle }} onClick={onClick}>
-        <div style={headerStyle}>
-          <button
-            onClick={() => onToggle(task)}
-            style={doneButtonStyle}
-            aria-label={
-              task.completed
-                ? `Mark task ${task.title} as undone`
-                : `Mark task ${task.title} as done`
-            }
-          >
-            {task.completed ? "Undo" : "Done"}
-          </button>
-          <span style={titleStyle}>
-            {task.id} - {task.title}
-          </span>
-          <span style={priorityStyle(task.priority)}>{task.priority}</span>
-          <button
-            onClick={() => onDelete(task.id)}
-            style={deleteButtonStyle}
-            aria-label={`Delete task ${task.title}`}
-          >
-            Delete
-          </button>
-        </div>
-
-        <div>
-          <label style={labelStyle}>
-            Due Date:{" "}
-            <input
-              type="date"
-              value={task.date || ""}
-              onChange={handleDateChange}
-              style={inputDateStyle}
-            />
-          </label>
-        </div>
-      </div>
-
-      <div
-        style={innerCardStyle}
-        ref={sliderRef}
-        onMouseDown={handleMouseDown}
+    <>
+      <motion.li
+        className={`outerCard ${task.completed ? "completed" : ""}`}
+        initial={{ opacity: 0, y: 10, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.8 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        layout
       >
-        <div style={sliderContainerStyle}>
-          <span style={completeLabelStyle}>Complete %</span>
-          <div style={sliderTrackStyle}>
-            <div style={sliderFillStyle(progress)} />
-            <div style={sliderThumbStyle(progress)} />
+        <div className="innerCard mainInfo">
+          <div className="header">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDoneClick();
+              }}
+              className="doneButton"
+              aria-label={
+                task.completed
+                  ? `Mark task ${task.title} as Not Completed`
+                  : `Mark task ${task.title} as completed`
+              }
+            >
+              {task.completed ? "Mark as Not Completed" : "Mark as Completed"}
+            </button>
+            <span className="title">
+              {task.id}  {task.title}
+            </span>
+            <span className={priorityClass[task.priority] || ""}>
+              {task.priority}
+            </span>
+            <button
+              onClick={() => onDelete(task.id)}
+              className="iconButton deleteButton"
+              aria-label={`Delete task ${task.title}`}
+              title="Delete task"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="icon"
+                width="22"
+                height="22"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a2 2 0 012 2v2H8V5a2 2 0 012-2z"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+              className="iconButton editButton"
+              aria-label={`Edit task ${task.title}`}
+              title="Edit task"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="icon"
+                width="22"
+                height="22"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.313l-4 1 1-4L16.862 3.487z"
+                />
+              </svg>
+            </button>
           </div>
-          <input
-            type="number"
-            min="0"
-            max="100"
-            value={Math.round(progress)}
-            onChange={handleNumberInputChange}
-            style={inputNumberStyle}
-            aria-label="Progress percentage input"
-          />
+
+          <div style={{ marginBottom: 8, fontSize: 14, color: "black" }}>
+            <strong>Details:</strong> {task.details || "No details"}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              marginBottom: 8,
+              fontSize: 14,
+              color: "black",
+            }}
+          >
+            <div>
+              <strong>Start Date:</strong> {task.startDate || "N/A"}
+            </div>
+            <div>
+              <strong>End Date:</strong> {task.approxEndDate || "N/A"}
+            </div>
+            <div>
+              <strong>Due Date:</strong> {task.date || "N/A"}
+            </div>
+          </div>
         </div>
-      </div>
-    </motion.li>
+
+        <div className="innerCard" ref={sliderRef} onMouseDown={handleMouseDown}>
+          <div className="sliderContainer">
+            <span className="completeLabel"> %Completed</span>
+            <div className="sliderTrack">
+              <div
+                className="sliderFill"
+                style={{ width: `${progress}%` }}
+              />
+              <div
+                className="sliderThumb"
+                style={{ left: `${progress}%` }}
+              />
+            </div>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={Math.round(progress)}
+              onChange={handleNumberInputChange}
+              className="inputNumber"
+              aria-label="Progress percentage input"
+            />
+          </div>
+        </div>
+      </motion.li>
+      {showProgressModal && (
+        <ProgressUpdateModal
+          initialProgress={progress}
+          onClose={handleProgressModalClose}
+          onSave={handleProgressSave}
+        />
+      )}
+    </>
   );
 }
