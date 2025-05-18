@@ -170,30 +170,52 @@ export default function Task({ task, onToggle, onDelete, onUpdate, onEdit }) {
             </span>
             <button
               onClick={() => onDelete(task.id)}
-              className="deleteButton"
+              className="iconButton deleteButton"
               aria-label={`Delete task ${task.title}`}
+              title="Delete task"
             >
-              Delete
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="icon"
+                width="22"
+                height="22"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a2 2 0 012 2v2H8V5a2 2 0 012-2z"
+                />
+              </svg>
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit();
               }}
-              style={{
-                backgroundColor: "#3182ce",
-                color: "white",
-                border: "none",
-                borderRadius: 4,
-                padding: "4px 8px",
-                cursor: "pointer",
-                fontWeight: "600",
-                marginLeft: 8,
-                transition: "background-color 0.3s ease",
-              }}
+              className="iconButton editButton"
               aria-label={`Edit task ${task.title}`}
+              title="Edit task"
             >
-              Edit
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="icon"
+                width="22"
+                height="22"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.313l-4 1 1-4L16.862 3.487z"
+                />
+              </svg>
             </button>
           </div>
 
